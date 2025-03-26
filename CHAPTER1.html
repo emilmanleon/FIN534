@@ -1,0 +1,1055 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Analytics: Chapter 1</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .progress-bar {
+            height: 4px;
+            background: #5D5CDE;
+            width: 0%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 50;
+            transition: width 0.3s ease;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Quiz styles */
+        .quiz-option {
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+        .quiz-option.selected {
+            background-color: rgba(93, 92, 222, 0.2);
+            border-color: #5D5CDE;
+        }
+        .quiz-option.correct {
+            background-color: rgba(52, 211, 153, 0.2);
+            border-color: #34D399;
+        }
+        .quiz-option.incorrect {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: #EF4444;
+        }
+        /* Dark mode support */
+        .dark body {
+            background-color: #181818;
+            color: #e2e2e2;
+        }
+        .dark .bg-white {
+            background-color: #222;
+        }
+        .dark .bg-gray-50 {
+            background-color: #1e1e1e;
+        }
+        .dark .bg-gray-100 {
+            background-color: #2a2a2a;
+        }
+        .dark .text-gray-600, .dark .text-gray-700 {
+            color: #d1d1d1;
+        }
+        .dark .text-gray-800, .dark .text-gray-900 {
+            color: #e2e2e2;
+        }
+        .dark .border-gray-200 {
+            border-color: #333;
+        }
+        .dark .shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="progress-bar"></div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-40 dark:bg-gray-800">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                <i class="fas fa-chart-line text-5D5CDE mr-2"></i>
+                <span>Business Analytics: Chapter 1</span>
+            </h1>
+            <div class="flex items-center space-x-4">
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
+                </button>
+                <div class="hidden md:block">
+                    <span id="progress-text" class="text-sm text-gray-600 dark:text-gray-300">0% Complete</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white shadow-sm mb-6 sticky top-14 z-30 dark:bg-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="flex overflow-x-auto space-x-4 py-3 scrollbar-hide">
+                <button data-target="intro" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-5D5CDE text-white">Introduction</button>
+                <button data-target="what-is" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">What is BA</button>
+                <button data-target="evolution" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Evolution</button>
+                <button data-target="scope" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Scope</button>
+                <button data-target="data" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Data</button>
+                <button data-target="big-data" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Big Data</button>
+                <button data-target="applications" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Applications</button>
+                <button data-target="quiz" class="nav-btn whitespace-nowrap px-4 py-2 rounded-full bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-6 mb-20">
+        <!-- Introduction Section -->
+        <section id="intro" class="section active mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <div class="flex flex-col md:flex-row items-center mb-6">
+                    <div class="md:w-1/2 md:pr-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4 dark:text-white">Introduction to Business Analytics</h2>
+                        <p class="text-gray-700 mb-4 dark:text-gray-300">Business Analytics is transforming how organizations make decisions and gain competitive advantages in today's data-driven world.</p>
+                        <p class="text-gray-700 dark:text-gray-300">This chapter introduces the fundamental concepts, evolution, and applications of business analytics.</p>
+                    </div>
+                    <div class="md:w-1/2 mt-6 md:mt-0 flex justify-center">
+                        <div class="rounded-lg bg-indigo-50 p-6 dark:bg-indigo-900/20">
+                            <i class="fas fa-chart-pie text-8xl text-5D5CDE"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap -mx-2 mt-6">
+                    <div class="w-full md:w-1/3 px-2 mb-4">
+                        <div class="card bg-gray-50 rounded-lg p-4 h-full border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                <h3 class="font-semibold text-gray-800 dark:text-white">Learn</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">Understand the key concepts and applications of business analytics</p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 px-2 mb-4">
+                        <div class="card bg-gray-50 rounded-lg p-4 h-full border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-puzzle-piece text-green-500 mr-2"></i>
+                                <h3 class="font-semibold text-gray-800 dark:text-white">Explore</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">Discover how data transforms into actionable business insights</p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/3 px-2 mb-4">
+                        <div class="card bg-gray-50 rounded-lg p-4 h-full border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                                <h3 class="font-semibold text-gray-800 dark:text-white">Apply</h3>
+                            </div>
+                            <p class="text-gray-600 text-sm dark:text-gray-300">Learn how to apply analytical methods to real business problems</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What is Business Analytics Section -->
+        <section id="what-is" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">What is Business Analytics?</h2>
+                
+                <div class="flex flex-col md:flex-row items-center mb-8">
+                    <div class="md:w-3/5 pr-0 md:pr-8">
+                        <p class="text-gray-700 mb-4 dark:text-gray-300">Business Analytics is the use of:</p>
+                        <ul class="list-none space-y-3 mb-6">
+                            <li class="flex items-start">
+                                <i class="fas fa-database text-5D5CDE mt-1 mr-3"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Data from various sources</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-laptop-code text-5D5CDE mt-1 mr-3"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Information technology tools and platforms</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-calculator text-5D5CDE mt-1 mr-3"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Statistical analysis methods</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-square-root-alt text-5D5CDE mt-1 mr-3"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Quantitative methods and techniques</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-project-diagram text-5D5CDE mt-1 mr-3"></i>
+                                <span class="text-gray-700 dark:text-gray-300">Mathematical or computer-based models</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="md:w-2/5 mt-6 md:mt-0">
+                        <div class="bg-indigo-50 p-5 rounded-lg dark:bg-indigo-900/20">
+                            <div class="flex justify-center">
+                                <i class="fas fa-chart-line text-7xl text-5D5CDE mb-4"></i>
+                            </div>
+                            <p class="text-center text-gray-800 font-medium dark:text-gray-200">
+                                To help managers gain improved insight about their business operations and make better, fact-based decisions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                    <h3 class="font-semibold text-gray-800 mb-2 dark:text-white">Key Benefits:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-arrow-down text-green-500 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Reduced costs</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Better risk management</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Faster decisions</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-chart-bar text-purple-500 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Better productivity</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-coins text-yellow-600 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Enhanced profitability</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-smile text-red-500 mr-2"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Customer satisfaction</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Evolution Section -->
+        <section id="evolution" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Evolution of Business Analytics</h2>
+                
+                <div class="flex flex-col md:flex-row gap-6 mb-8">
+                    <div class="w-full md:w-1/2">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">Analytic Foundations</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-start mb-4">
+                                <div class="bg-blue-100 p-2 rounded-full dark:bg-blue-900">
+                                    <i class="fas fa-brain text-blue-600 dark:text-blue-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Business Intelligence (BI)</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Extracting insights from business data</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start mb-4">
+                                <div class="bg-green-100 p-2 rounded-full dark:bg-green-900">
+                                    <i class="fas fa-desktop text-green-600 dark:text-green-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Information Systems (IS)</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Technology for managing business information</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start mb-4">
+                                <div class="bg-purple-100 p-2 rounded-full dark:bg-purple-900">
+                                    <i class="fas fa-chart-bar text-purple-600 dark:text-purple-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Statistics</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Mathematical analysis of data</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-red-100 p-2 rounded-full dark:bg-red-900">
+                                    <i class="fas fa-cogs text-red-600 dark:text-red-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Operations Research/Management Science</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Application of mathematical models to decision-making</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full md:w-1/2">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">Modern Business Analytics</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-start mb-4">
+                                <div class="bg-yellow-100 p-2 rounded-full dark:bg-yellow-900">
+                                    <i class="fas fa-search text-yellow-600 dark:text-yellow-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Data Mining</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Discovering patterns in large datasets</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start mb-4">
+                                <div class="bg-indigo-100 p-2 rounded-full dark:bg-indigo-900">
+                                    <i class="fas fa-random text-indigo-600 dark:text-indigo-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Simulation and Risk Analysis</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Modeling future scenarios and their probabilities</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start mb-4">
+                                <div class="bg-teal-100 p-2 rounded-full dark:bg-teal-900">
+                                    <i class="fas fa-laptop text-teal-600 dark:text-teal-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Decision Support Systems (DSS)</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Computer-based systems for decision making</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-pink-100 p-2 rounded-full dark:bg-pink-900">
+                                    <i class="fas fa-eye text-pink-600 dark:text-pink-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Visualization</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Graphical representation of data and insights</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Software Support</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center dark:bg-gray-700 dark:border-gray-600">
+                            <i class="fas fa-table text-3xl text-5D5CDE mb-2"></i>
+                            <h4 class="font-medium text-gray-800 dark:text-white">Excel</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Spreadsheet Software</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center dark:bg-gray-700 dark:border-gray-600">
+                            <i class="fas fa-chart-pie text-3xl text-5D5CDE mb-2"></i>
+                            <h4 class="font-medium text-gray-800 dark:text-white">IBM Cognos</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Business Intelligence</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center dark:bg-gray-700 dark:border-gray-600">
+                            <i class="fas fa-chart-bar text-3xl text-5D5CDE mb-2"></i>
+                            <h4 class="font-medium text-gray-800 dark:text-white">SAS Analytics</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Statistical Analysis</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 text-center dark:bg-gray-700 dark:border-gray-600">
+                            <i class="fas fa-project-diagram text-3xl text-5D5CDE mb-2"></i>
+                            <h4 class="font-medium text-gray-800 dark:text-white">Tableau</h4>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Data Visualization</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scope Section -->
+        <section id="scope" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Scope of Business Analytics</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="card bg-blue-50 rounded-lg p-5 border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-history text-4xl text-blue-500 dark:text-blue-300"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 text-center mb-3 dark:text-white">Descriptive Analytics</h3>
+                        <p class="text-gray-700 dark:text-gray-300">The use of data to understand past and current business performance and make informed decisions.</p>
+                        <div class="mt-4 pt-4 border-t border-blue-100 dark:border-blue-800">
+                            <span class="block text-sm text-blue-600 dark:text-blue-300"><i class="fas fa-question-circle mr-1"></i> What has happened?</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card bg-purple-50 rounded-lg p-5 border border-purple-100 dark:bg-purple-900/20 dark:border-purple-800">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-chart-line text-4xl text-purple-500 dark:text-purple-300"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 text-center mb-3 dark:text-white">Predictive Analytics</h3>
+                        <p class="text-gray-700 dark:text-gray-300">Predict the future by examining historical data, detecting patterns or relationships, and extrapolating these relationships forward in time.</p>
+                        <div class="mt-4 pt-4 border-t border-purple-100 dark:border-purple-800">
+                            <span class="block text-sm text-purple-600 dark:text-purple-300"><i class="fas fa-question-circle mr-1"></i> What will happen?</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card bg-green-50 rounded-lg p-5 border border-green-100 dark:bg-green-900/20 dark:border-green-800">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-lightbulb text-4xl text-green-500 dark:text-green-300"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800 text-center mb-3 dark:text-white">Prescriptive Analytics</h3>
+                        <p class="text-gray-700 dark:text-gray-300">Identify the best alternatives to minimize or maximize some objective, taking constraints into account.</p>
+                        <div class="mt-4 pt-4 border-t border-green-100 dark:border-green-800">
+                            <span class="block text-sm text-green-600 dark:text-green-300"><i class="fas fa-question-circle mr-1"></i> What should we do?</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-100 p-5 rounded-lg dark:bg-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Analytics Progression</h3>
+                    <div class="relative">
+                        <div class="h-2 bg-gray-300 rounded-full dark:bg-gray-600"></div>
+                        <div class="absolute top-0 left-0 w-1/3 h-2 bg-blue-500 rounded-full"></div>
+                        <div class="absolute top-0 left-1/3 w-1/3 h-2 bg-purple-500 rounded-full"></div>
+                        <div class="absolute top-0 left-2/3 w-1/3 h-2 bg-green-500 rounded-full"></div>
+                        
+                        <div class="flex justify-between mt-4">
+                            <div class="text-center w-1/3">
+                                <span class="inline-block w-6 h-6 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center">1</span>
+                                <p class="text-sm text-gray-700 mt-1 dark:text-gray-300">Understanding</p>
+                            </div>
+                            <div class="text-center w-1/3">
+                                <span class="inline-block w-6 h-6 rounded-full bg-purple-500 text-white text-xs flex items-center justify-center">2</span>
+                                <p class="text-sm text-gray-700 mt-1 dark:text-gray-300">Forecasting</p>
+                            </div>
+                            <div class="text-center w-1/3">
+                                <span class="inline-block w-6 h-6 rounded-full bg-green-500 text-white text-xs flex items-center justify-center">3</span>
+                                <p class="text-sm text-gray-700 mt-1 dark:text-gray-300">Optimizing</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Section -->
+        <section id="data" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Data for Business Analytics</h2>
+                
+                <div class="flex flex-col md:flex-row gap-6 mb-8">
+                    <div class="w-full md:w-1/2">
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 mb-6 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-database text-2xl text-5D5CDE mr-3"></i>
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">What is Data?</h3>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300">Numbers or textual data that are collected through some type of measurement process. Raw facts and figures that have not yet been processed.</p>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                            <div class="flex items-center mb-4">
+                                <i class="fas fa-info-circle text-2xl text-5D5CDE mr-3"></i>
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">What is Information?</h3>
+                            </div>
+                            <p class="text-gray-700 dark:text-gray-300">The result of analyzing data; that is, extracting meaning from data to support evaluation and decision making. Data that has been processed into a meaningful form.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full md:w-1/2">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">Common Data Sources</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-file-invoice-dollar text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Annual reports</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-balance-scale text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Accounting audits</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-chart-line text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Economic trends</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-search-dollar text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Marketing research</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-cogs text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Operations data</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-users text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">HR measurements</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-globe text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Web behavior</span>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 flex items-center dark:bg-gray-700 dark:border-gray-600">
+                                <i class="fas fa-comment-dollar text-blue-500 mr-2"></i>
+                                <span class="text-gray-700 text-sm dark:text-gray-300">Profitability analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Data Quality Dimensions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-5 rounded-lg border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-check-circle text-blue-500 mr-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">Reliability</h4>
+                            </div>
+                            <p class="text-gray-700 mb-3 dark:text-gray-300">Data are accurate and consistent.</p>
+                            <div class="bg-white p-3 rounded-lg border border-blue-100 text-sm dark:bg-gray-800 dark:border-blue-800">
+                                <p class="text-gray-600 dark:text-gray-400"><i class="fas fa-quote-left text-blue-300 mr-1"></i> A tire pressure gauge that consistently reads several pounds of pressure below the true value is not reliable, although it is valid because it does measure tire pressure. <i class="fas fa-quote-right text-blue-300 ml-1"></i></p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 p-5 rounded-lg border border-green-100 dark:bg-green-900/20 dark:border-green-800">
+                            <div class="flex items-center mb-3">
+                                <i class="fas fa-bullseye text-green-500 mr-2"></i>
+                                <h4 class="font-semibold text-gray-800 dark:text-white">Validity</h4>
+                            </div>
+                            <p class="text-gray-700 mb-3 dark:text-gray-300">Data correctly measures what it is supposed to measure.</p>
+                            <div class="bg-white p-3 rounded-lg border border-green-100 text-sm dark:bg-gray-800 dark:border-green-800">
+                                <p class="text-gray-600 dark:text-gray-400"><i class="fas fa-quote-left text-green-300 mr-1"></i> The number of calls to a customer service desk might be counted correctly (reliable) but not valid if used to assess customer dissatisfaction, as many calls may be simple queries. <i class="fas fa-quote-right text-green-300 ml-1"></i></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Big Data Section -->
+        <section id="big-data" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Big Data</h2>
+                
+                <div class="flex flex-col md:flex-row items-center mb-8">
+                    <div class="md:w-3/5 pr-0 md:pr-8">
+                        <p class="text-gray-700 mb-6 dark:text-gray-300">
+                            Big data refers to massive amounts of business data (volume) from a wide variety of sources (variety), much of which is available in real time (velocity), and much of which is uncertain or unpredictable (veracity).
+                        </p>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6 dark:bg-gray-700 dark:border-gray-600">
+                            <h4 class="font-semibold text-gray-800 mb-3 dark:text-white">The 4 V's of Big Data</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="flex items-center">
+                                    <div class="bg-blue-100 w-8 h-8 rounded-full flex items-center justify-center mr-3 dark:bg-blue-900">
+                                        <span class="font-bold text-blue-600 dark:text-blue-300">V</span>
+                                    </div>
+                                    <span class="text-gray-700 dark:text-gray-300">Volume</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-green-100 w-8 h-8 rounded-full flex items-center justify-center mr-3 dark:bg-green-900">
+                                        <span class="font-bold text-green-600 dark:text-green-300">V</span>
+                                    </div>
+                                    <span class="text-gray-700 dark:text-gray-300">Variety</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-purple-100 w-8 h-8 rounded-full flex items-center justify-center mr-3 dark:bg-purple-900">
+                                        <span class="font-bold text-purple-600 dark:text-purple-300">V</span>
+                                    </div>
+                                    <span class="text-gray-700 dark:text-gray-300">Velocity</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="bg-red-100 w-8 h-8 rounded-full flex items-center justify-center mr-3 dark:bg-red-900">
+                                        <span class="font-bold text-red-600 dark:text-red-300">V</span>
+                                    </div>
+                                    <span class="text-gray-700 dark:text-gray-300">Veracity</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="md:w-2/5">
+                        <div class="bg-indigo-50 p-5 rounded-lg dark:bg-indigo-900/20">
+                            <i class="fas fa-database text-5xl text-5D5CDE mb-4 block text-center"></i>
+                            <blockquote class="text-sm text-gray-700 italic mb-3 dark:text-gray-300">
+                                "The effective use of big data has the potential to transform economies, delivering a new wave of productivity growth and consumer surplus. Using big data will become a key basis of competition for existing companies, and will create new competitors who are able to attract employees that have the critical skills for a big data world."
+                            </blockquote>
+                            <p class="text-right text-xs text-gray-600 dark:text-gray-400">- McKinsey Global Institute, 2011</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                    <h3 class="font-semibold text-gray-800 mb-4 dark:text-white">Big Data Sources</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-shopping-cart text-purple-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Transaction Systems</span>
+                        </div>
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-comments text-blue-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Social Media</span>
+                        </div>
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-wifi text-green-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">IoT Devices</span>
+                        </div>
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-satellite text-red-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Geospatial Data</span>
+                        </div>
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-video text-yellow-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Video/Audio</span>
+                        </div>
+                        <div class="flex items-center bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <i class="fas fa-file-alt text-indigo-500 mr-3"></i>
+                            <span class="text-gray-700 dark:text-gray-300">Unstructured Text</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Applications Section -->
+        <section id="applications" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Applications of Business Analytics</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Marketing &amp; Sales</h3>
+                        <div class="space-y-3">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-red-100 p-2 rounded-full mt-1 dark:bg-red-900">
+                                    <i class="fas fa-tag text-red-600 dark:text-red-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Pricing</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Setting prices for consumer and industrial goods, government contracts, and maintenance contracts</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-blue-100 p-2 rounded-full mt-1 dark:bg-blue-900">
+                                    <i class="fas fa-users text-blue-600 dark:text-blue-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Customer Segmentation</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Identifying and targeting key customer groups in retail, insurance, and credit card industries</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-green-100 p-2 rounded-full mt-1 dark:bg-green-900">
+                                    <i class="fas fa-store text-green-600 dark:text-green-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Merchandising</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Determining brands to buy, quantities, and allocations</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-yellow-100 p-2 rounded-full mt-1 dark:bg-yellow-900">
+                                    <i class="fas fa-map-marker-alt text-yellow-600 dark:text-yellow-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Location</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Finding the best location for bank branches and ATMs, or where to service industrial equipment</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 dark:text-white">Operations &amp; Management</h3>
+                        <div class="space-y-3">
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-purple-100 p-2 rounded-full mt-1 dark:bg-purple-900">
+                                    <i class="fas fa-truck text-purple-600 dark:text-purple-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Supply Chain Design</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Determining the best sourcing and transportation options and finding the best delivery routes</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-indigo-100 p-2 rounded-full mt-1 dark:bg-indigo-900">
+                                    <i class="fas fa-user-tie text-indigo-600 dark:text-indigo-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Staffing</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Ensuring appropriate staffing levels and capabilities, and hiring the right people</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200 flex items-start dark:bg-gray-700 dark:border-gray-600">
+                                <div class="bg-pink-100 p-2 rounded-full mt-1 dark:bg-pink-900">
+                                    <i class="fas fa-heartbeat text-pink-600 dark:text-pink-300"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-800 dark:text-white">Health Care</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300">Scheduling operating rooms, improving patient flow, purchasing supplies, and predicting health risk factors</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+                    <h3 class="font-semibold text-gray-800 mb-4 dark:text-white">Implementation Challenges</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <div class="flex items-center text-red-500 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium text-gray-800 dark:text-white">Knowledge Gap</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Lack of understanding of how to use analytics</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <div class="flex items-center text-red-500 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium text-gray-800 dark:text-white">Competing Priorities</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Other business initiatives taking precedence</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <div class="flex items-center text-red-500 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium text-gray-800 dark:text-white">Skills Shortage</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Insufficient analytical skills in the organization</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <div class="flex items-center text-red-500 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium text-gray-800 dark:text-white">Data Issues</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Difficulty in getting good data and sharing information</p>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg shadow-sm dark:bg-gray-800">
+                            <div class="flex items-center text-red-500 mb-2">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                <span class="font-medium text-gray-800 dark:text-white">Cost Perception</span>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Not understanding benefits versus perceived costs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="section mb-12">
+            <div class="bg-white rounded-lg shadow-md p-6 dark:bg-gray-800">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 dark:text-white">Knowledge Check</h2>
+                
+                <div class="mb-8">
+                    <div id="quiz-container">
+                        <div id="question-1" class="quiz-question mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">1. What are the three main types of business analytics?</h3>
+                            <div class="space-y-2">
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600" data-correct="true">
+                                    <span class="text-gray-700 dark:text-gray-300">Descriptive, Predictive, and Prescriptive Analytics</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Statistical, Computational, and Visual Analytics</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Data Mining, Business Intelligence, and Decision Support</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Exploratory, Confirmatory, and Interpretive Analytics</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="question-2" class="quiz-question mb-6 hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">2. Which of the following is NOT one of the four V's of Big Data?</h3>
+                            <div class="space-y-2">
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Volume</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Velocity</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Veracity</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600" data-correct="true">
+                                    <span class="text-gray-700 dark:text-gray-300">Visibility</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="question-3" class="quiz-question mb-6 hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">3. Which type of analytics focuses on "What will happen?"</h3>
+                            <div class="space-y-2">
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Descriptive Analytics</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600" data-correct="true">
+                                    <span class="text-gray-700 dark:text-gray-300">Predictive Analytics</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Prescriptive Analytics</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Diagnostic Analytics</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="question-4" class="quiz-question mb-6 hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">4. What is the difference between data and information?</h3>
+                            <div class="space-y-2">
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Data is digital while information is analog</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Data is qualitative while information is quantitative</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600" data-correct="true">
+                                    <span class="text-gray-700 dark:text-gray-300">Information is the result of analyzing data to extract meaning</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Data is structured while information is unstructured</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="question-5" class="quiz-question mb-6 hidden">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3 dark:text-white">5. Which of the following is an application of business analytics in healthcare?</h3>
+                            <div class="space-y-2">
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Determining the best location for ATMs</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Setting prices for consumer goods</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600">
+                                    <span class="text-gray-700 dark:text-gray-300">Customer segmentation for retail</span>
+                                </div>
+                                <div class="quiz-option cursor-pointer p-3 border border-gray-200 rounded-lg dark:border-gray-600" data-correct="true">
+                                    <span class="text-gray-700 dark:text-gray-300">Scheduling operating rooms to improve utilization</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="quiz-result" class="hidden">
+                            <div class="bg-green-50 p-5 rounded-lg border border-green-100 text-center dark:bg-green-900/20 dark:border-green-800">
+                                <i class="fas fa-check-circle text-4xl text-green-500 mb-3"></i>
+                                <h3 class="text-xl font-semibold text-gray-800 mb-2 dark:text-white">Quiz Completed!</h3>
+                                <p class="text-gray-700 mb-4 dark:text-gray-300">You scored <span id="quiz-score">0</span> out of 5</p>
+                                <button id="retry-quiz" class="px-4 py-2 bg-5D5CDE text-white rounded-lg hover:bg-opacity-90 transition-all">Try Again</button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between mt-6">
+                            <button id="prev-question" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all hidden dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Previous</button>
+                            <button id="next-question" class="px-4 py-2 bg-5D5CDE text-white rounded-lg hover:bg-opacity-90 transition-all">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 dark:bg-gray-800 dark:border-gray-700">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Business Analytics: Methods, Models, and Decisions - Chapter 1</p>
+        </div>
+    </footer>
+
+    <script>
+    // Helper to check dark mode
+    function checkDarkMode() {
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        checkDarkMode();
+        
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+        });
+        
+        // Scroll animation
+        const sections = document.querySelectorAll('.section');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    
+                    // Update progress bar
+                    const sectionId = entry.target.id;
+                    document.querySelectorAll('.nav-btn').forEach(btn => {
+                        if (btn.dataset.target === sectionId) {
+                            btn.classList.remove('bg-gray-200', 'text-gray-700', 'dark:bg-gray-700', 'dark:text-gray-300');
+                            btn.classList.add('bg-5D5CDE', 'text-white');
+                        } else {
+                            btn.classList.remove('bg-5D5CDE', 'text-white');
+                            btn.classList.add('bg-gray-200', 'text-gray-700', 'dark:bg-gray-700', 'dark:text-gray-300');
+                        }
+                    });
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Navigation
+        const navButtons = document.querySelectorAll('.nav-btn');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const target = this.dataset.target;
+                const targetSection = document.getElementById(target);
+                
+                // Smooth scroll to section
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        
+        // Progress tracking
+        window.addEventListener('scroll', function() {
+            // Calculate scroll progress
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.offsetHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            // Update progress bar
+            document.querySelector('.progress-bar').style.width = scrollPercent + '%';
+            document.getElementById('progress-text').textContent = Math.round(scrollPercent) + '% Complete';
+        });
+        
+        // Quiz functionality
+        let currentQuestion = 1;
+        let score = 0;
+        const totalQuestions = 5;
+        
+        const nextButton = document.getElementById('next-question');
+        const prevButton = document.getElementById('prev-question');
+        
+        function showQuestion(questionNumber) {
+            // Hide all questions
+            document.querySelectorAll('.quiz-question').forEach(q => {
+                q.classList.add('hidden');
+            });
+            
+            // Show the current question
+            document.getElementById('question-' + questionNumber).classList.remove('hidden');
+            
+            // Update navigation buttons
+            if (questionNumber === 1) {
+                prevButton.classList.add('hidden');
+            } else {
+                prevButton.classList.remove('hidden');
+            }
+            
+            if (questionNumber === totalQuestions) {
+                nextButton.textContent = 'Finish';
+            } else {
+                nextButton.textContent = 'Next';
+            }
+        }
+        
+        // Initialize quiz options
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selection from other options in the same question
+                const questionDiv = this.closest('.quiz-question');
+                questionDiv.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Select this option
+                this.classList.add('selected');
+            });
+        });
+        
+        // Next button functionality
+        nextButton.addEventListener('click', function() {
+            const currentQuestionDiv = document.getElementById('question-' + currentQuestion);
+            const selectedOption = currentQuestionDiv.querySelector('.quiz-option.selected');
+            
+            if (selectedOption) {
+                // Check if answer is correct
+                if (selectedOption.dataset.correct) {
+                    selectedOption.classList.add('correct');
+                    score++;
+                } else {
+                    selectedOption.classList.add('incorrect');
+                    // Highlight the correct answer
+                    currentQuestionDiv.querySelector('.quiz-option[data-correct="true"]').classList.add('correct');
+                }
+                
+                // Disable all options in this question
+                currentQuestionDiv.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('cursor-pointer');
+                    opt.style.pointerEvents = 'none';
+                });
+                
+                // Wait a moment to show the correct/incorrect feedback
+                setTimeout(() => {
+                    if (currentQuestion < totalQuestions) {
+                        currentQuestion++;
+                        showQuestion(currentQuestion);
+                    } else {
+                        // Show results
+                        document.getElementById('quiz-score').textContent = score;
+                        document.getElementById('quiz-result').classList.remove('hidden');
+                        document.querySelectorAll('.quiz-question').forEach(q => {
+                            q.classList.add('hidden');
+                        });
+                        nextButton.classList.add('hidden');
+                        prevButton.classList.add('hidden');
+                    }
+                }, 1000);
+            } else {
+                alert('Please select an answer before continuing.');
+            }
+        });
+        
+        // Previous button functionality
+        prevButton.addEventListener('click', function() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        });
+        
+        // Retry quiz functionality
+        document.getElementById('retry-quiz').addEventListener('click', function() {
+            // Reset quiz
+            currentQuestion = 1;
+            score = 0;
+            
+            // Remove all correct/incorrect indicators and re-enable options
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+                opt.classList.add('cursor-pointer');
+                opt.style.pointerEvents = 'auto';
+            });
+            
+            // Show the first question
+            document.getElementById('quiz-result').classList.add('hidden');
+            showQuestion(1);
+            nextButton.classList.remove('hidden');
+        });
+        
+        // Initialize quiz
+        showQuestion(1);
+    });
+    </script>
+
+
+</body></html>
